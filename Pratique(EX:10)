@@ -1,0 +1,101 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
+df=pd.read_csv('C:/Users/leandro/Downloads/ecommerce_preparados.csv')
+pd.set_option('display.max_columns',None)
+
+#Padronizando os dados que seram úteis
+organizacao_genero ={
+    'Masculino': 'Homem',
+    'Feminino':'Mulher',
+    'short menina verao look mulher':'Mulher',
+    'Bebês': 'Bebês',
+    'Sem gênero': 'Sem gênero',
+    'Meninas': 'Meninas',
+    'Meninos': 'Meninos',
+    'Sem gênero infantil': 'infantil',
+
+    'roupa para gordinha pluss P ao 52' :'Mulher',
+    'Unissex'  :'Unissex' ,
+    'menino' : 'Meninos' ,
+    'bermuda feminina brilho Blogueira':'Mulher'
+}
+
+df['Gênero']=df['Gênero'].replace(organizacao_genero)
+
+
+# HISTOGRAMA
+plt.figure(figsize=(10,6))
+plt.hist(df['Preço'])
+plt.title('Histograma dos preços oferecidos')
+plt.xlabel('Preço ')
+plt.ylabel('Unidades')
+plt.show()
+
+
+#Gráfico de dispersão
+#Padronizando os dados através de um dicionário
+mapa = {
+    'Nenhum': 0,
+    '1': 1,
+    '2': 2,
+    '3': 3,
+    '4': 4,
+    '+5': 5,
+    '+25': 25,
+    '+50': 50,
+    '+100': 100,
+    '+500': 500,
+    '+1000': 1000,
+    '+5mil': 5000,
+    '+10mil': 10000,
+    '+50mil': 50000
+}
+df['Qtd_Num']= df['Qtd_Vendidos'].map(mapa)
+plt.figure(figsize=(12,6))
+plt.scatter(df['Desconto'],df['Qtd_Num'])
+plt.yscale('log')
+plt.xlabel('Desconto')
+plt.ylabel('numero de vendas')
+
+plt.show()
+
+#Mapa de calor
+corr=df[['Nota','N_Avaliações','Preço','Qtd_Vendidos_Cod','Desconto']].corr()
+sns.heatmap(corr, annot=True, cmap='coolwarm')
+plt.title('Correlação ')
+plt.show()
+
+#Gráfico de barra
+plt.figure(figsize=(10,10))
+x=df['Gênero'].value_counts().index
+y=df['Gênero'].value_counts().values
+
+
+plt.bar(x,y,color='green')
+plt.title('Gênero')
+plt.xlabel('Vendas por genero')
+plt.ylabel('genero')
+plt.show()
+
+#Gráfico de pizza
+plt.figure(figsize=(10,6))
+plt.pie(y,labels=x, autopct='%.1f%%', startangle=360)
+plt.title('genero')
+plt.show()
+
+#Gráfico de densidade
+plt.figure(figsize=(10,6))
+sns.kdeplot(df['Nota'], fill=True,color='green')
+plt.title('Densidade das notas')
+plt.xlabel('Notas')
+plt.show()
+
+#Gráfico de regressão
+
+sns.regplot(x='Qtd_Num',y='Preço', data=df, color='#278f65', scatter_kws={'alpha':0.5, 'color':'#34c289'})
+plt.title('Regressão de vendas por preço')
+plt.xlabel('Vendas')
+plt.ylabel('Notas')
+plt.show()
